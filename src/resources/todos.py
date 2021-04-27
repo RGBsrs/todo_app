@@ -23,3 +23,25 @@ class TodoListApi(MethodView):
         db.session.add(todo)
         db.session.commit()
         return jsonify(self.todo_shema.dump(todo)), 201
+
+    def patch(self, uuid):
+        todo = TodoService.fetch_todo_by_uuid(db.session, uuid)
+        if not todo:
+            return '', 404
+        try:
+            todo = self.todo_shema.load(request.json, instance = todo, session = db.session,
+                partial = True )
+        except ValidationError as e:
+            return {'Message': f'error: {e}'}, 400
+        db.session.add(todo)
+        db.session.commit()    
+        return jsonify(self.todo_shema.dump(todo)), 200
+
+
+    def delete(self, uuid):
+        todo = TodoService.fetch_todo_by_uuid(db.session, uuid)
+        if not todo:
+            return '', 404
+        db.session.delete(todo)
+        db.session.commit()
+        return '', 204
