@@ -10,7 +10,7 @@ class Todo(db.Model):
     id = db.Column(db.Integer, primary_key = True)
     uuid = db.Column(db.String(36), unique = True)
     title = db.Column(db.String(120), nullable = False)
-    completed = db.Column(db.Boolean, default = False)
+    completed = db.Column(db.Boolean, default = False, nullable=False)
     created_at = db.Column(db.DateTime, default = datetime.datetime.now())
     updated_at = db.Column(db.DateTime)  
 
@@ -22,5 +22,5 @@ class Todo(db.Model):
 
 
     def __repr__(self):
-        return f'Todo({self.title},{self.completed}, timestamp = {self.timestamp})' 
+        return f'Todo({self.title},{self.completed}, timestamp = {self.updated_at})' 
 
