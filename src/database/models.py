@@ -1,4 +1,3 @@
-import uuid
 import datetime
 from src import db
 
