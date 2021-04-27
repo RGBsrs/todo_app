@@ -3,8 +3,8 @@ from src import db
 
 
 
-class Film(db.Model):
-    __tablename__ = 'films'
+class Todo(db.Model):
+    __tablename__ = 'todos'
 
     id = db.Column(db.Integer, primary_key = True)
     title = db.Column(db.String(120), nullable = False)
