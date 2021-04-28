@@ -28,8 +28,8 @@ class TodoListApi(MethodView):
     def patch(self, id = None):
         if not id:
             completed = request.json['completed']
-            todos = TodoService.bulk_check_todos(db.session, completed)
-            return jsonify(self.todo_shema.dump(todos, many=True)),200
+            TodoService.bulk_check_todos(db.session, completed)
+            return 'updated',200
 
         todo = TodoService.fetch_todo_by_id(db.session, id)
         if not todo:
@@ -45,7 +45,10 @@ class TodoListApi(MethodView):
         return jsonify(self.todo_shema.dump(todo)), 200
 
 
-    def delete(self, id):
+    def delete(self, id = None):
+        if not id:
+            TodoService.delete_completed_todos(db.session)
+            return '', 204
         todo = TodoService.fetch_todo_by_id(db.session, id)
         if not todo:
             return '', 404
