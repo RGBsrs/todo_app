@@ -10,11 +10,13 @@ class TodoService:
     def fetch_todo_by_id(cls, session, id):
         return cls.fetch_all_todos(session).filter_by(id = id).first()
 
-    @staticmethod
-    def bulk_complete_todos(cls,session):
-        todos_to_update = cls.fetch_all_todos(session).filter_by(completed = False).all()
-        for todo in todos_to_update:
-            todo.completed = True
+    @classmethod
+    def bulk_check_todos(cls, session, completed):
+        todos = cls.fetch_all_todos(session).filter(completed != completed).all()
+        mapper = []
+        for todo in todos:
+            mapper.append(dict(id =todo.id, title=todo.title, completed = completed))
 
-        session.bulk_update_mappings(todos_to_update)
+        session.bulk_update_mappings(Todo, mapper)
         session.commit()
+        return cls.fetch_all_todos(session).all()

@@ -27,10 +27,10 @@ class TodoListApi(MethodView):
 
     def patch(self, id = None):
         if not id:
-            TodoService.bulk_complete_todos(db.session)
-            todos = TodoService.fetch_all_todos(db.session).all()
-            return jsonify(self.todo_shema.dump(todos, many=True)), 200
-            
+            completed = request.json['completed']
+            todos = TodoService.bulk_check_todos(db.session, completed)
+            return jsonify(self.todo_shema.dump(todos, many=True)),200
+
         todo = TodoService.fetch_todo_by_id(db.session, id)
         if not todo:
             return '', 404
