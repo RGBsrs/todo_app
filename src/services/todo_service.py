@@ -18,7 +18,6 @@ class TodoService:
     @classmethod
     def bulk_check_todos(cls, session, completed):
         todos = cls.fetch_all_todos(session).all()
-        print(todos)
         mapper = []
         for todo in todos:
             mapper.append(dict(id = todo.id, title=todo.title, completed = completed))

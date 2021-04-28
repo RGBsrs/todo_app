@@ -13,8 +13,8 @@ class TodoListApi(MethodView):
     def get(self):
         todos = TodoService.fetch_all_todos(db.session).all()
         if not todos:
-            return '',404
-        return jsonify(self.todo_shema.dump(todos, many=True)),200
+            return '', 404
+        return jsonify(self.todo_shema.dump(todos, many=True)), 200
 
     def post(self):
         try:
