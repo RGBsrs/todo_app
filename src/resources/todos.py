@@ -1,3 +1,4 @@
+import datetime
 from flask import jsonify, request
 from flask.views import MethodView
 from marshmallow import ValidationError
@@ -24,13 +25,19 @@ class TodoListApi(MethodView):
         db.session.commit()
         return jsonify(self.todo_shema.dump(todo)), 201
 
-    def patch(self, uuid):
-        todo = TodoService.fetch_todo_by_uuid(db.session, uuid)
+    def patch(self, id = None):
+        if not id:
+            TodoService.bulk_complete_todos(db.session)
+            todos = TodoService.fetch_all_todos(db.session).all()
+            return jsonify(self.todo_shema.dump(todos, many=True)), 200
+            
+        todo = TodoService.fetch_todo_by_id(db.session, id)
         if not todo:
             return '', 404
         try:
             todo = self.todo_shema.load(request.json, instance = todo, session = db.session,
                 partial = True )
+            todo.updated_at = datetime.datetime.now()
         except ValidationError as e:
             return {'Message': f'error: {e}'}, 400
         db.session.add(todo)
@@ -38,8 +45,8 @@ class TodoListApi(MethodView):
         return jsonify(self.todo_shema.dump(todo)), 200
 
 
-    def delete(self, uuid):
-        todo = TodoService.fetch_todo_by_uuid(db.session, uuid)
+    def delete(self, id):
+        todo = TodoService.fetch_todo_by_id(db.session, id)
         if not todo:
             return '', 404
         db.session.delete(todo)

@@ -2,6 +2,7 @@ import config
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from flask_migrate import Migrate
+from flask_cors import CORS
 
 
 
@@ -13,3 +14,5 @@ migrate = Migrate(app, db)
 
 from src.database import models
 from src import routes
+
+cors = CORS(app, resources={r"/api/v1/*": {"origins": "*"}})
