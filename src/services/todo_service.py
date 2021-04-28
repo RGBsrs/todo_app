@@ -17,10 +17,10 @@ class TodoService:
 
     @classmethod
     def bulk_check_todos(cls, session, completed):
-        todos = cls.fetch_all_todos(session).filter(completed != completed).all()
+        todos = cls.fetch_all_todos(session).all()
+        print(todos)
         mapper = []
         for todo in todos:
-            mapper.append(dict(id =todo.id, title=todo.title, completed = completed))
-
+            mapper.append(dict(id = todo.id, title=todo.title, completed = completed))
         session.bulk_update_mappings(Todo, mapper)
         session.commit()
