@@ -6,24 +6,27 @@ from marshmallow import ValidationError
 from src import db
 from src.schemas.todos import TodoSchema
 from src.services.todo_service import TodoService
+from src.resources.auth import token_required
 
 
 class TodoListApi(MethodView):
-    todo_shema = TodoSchema()
+    todo_sсhema = TodoSchema()
+
+    @token_required
     def get(self):
         todos = TodoService.fetch_all_todos(db.session).all()
         if not todos:
             return '', 404
-        return jsonify(self.todo_shema.dump(todos, many=True)), 200
+        return jsonify(self.todo_sсhema.dump(todos, many=True)), 200
 
     def post(self):
         try:
-            todo = self.todo_shema.load(request.json, session = db.session)
+            todo = self.todo_sсhema.load(request.json, session = db.session)
         except ValidationError as e:
             return {'Message': f'error: {e}'}, 400
         db.session.add(todo)
         db.session.commit()
-        return jsonify(self.todo_shema.dump(todo)), 201
+        return jsonify(self.todo_sсhema.dump(todo)), 201
 
     def patch(self, id = None):
         if not id:
@@ -35,14 +38,14 @@ class TodoListApi(MethodView):
         if not todo:
             return '', 404
         try:
-            todo = self.todo_shema.load(request.json, instance = todo, session = db.session,
+            todo = self.todo_sсhema.load(request.json, instance = todo, session = db.session,
                 partial = True )
             todo.updated_at = datetime.datetime.now()
         except ValidationError as e:
             return {'Message': f'error: {e}'}, 400
         db.session.add(todo)
         db.session.commit()    
-        return jsonify(self.todo_shema.dump(todo)), 200
+        return jsonify(self.todo_sсhema.dump(todo)), 200
 
 
     def delete(self, id = None):

@@ -1,7 +1,7 @@
 from src.database.models import Todo
 
 
-class TodoService:
+class TodoService():
     @staticmethod
     def fetch_all_todos(session):
         return session.query(Todo)
