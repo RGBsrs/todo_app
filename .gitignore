@@ -97,4 +97,4 @@ venv.bak/
 
 #db
 
-data/.
+data/*.sqlite
