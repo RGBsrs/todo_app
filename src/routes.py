@@ -1,6 +1,7 @@
 from src import app
 from src.resources.todos import TodoListApi
 from src.resources.auth import LoginApi, RegisterApi,LogoutApi
+from src.resources.users import UserTodoListApi
 
 
 todo_list_api = TodoListApi.as_view('todos')
@@ -16,4 +17,14 @@ app.add_url_rule('/api/v1/logout', view_func=logout_api, strict_slashes = False)
 
 register_api = RegisterApi.as_view('register')
 app.add_url_rule('/api/v1/register', view_func=register_api, strict_slashes = False)
+
+user_todo_list_api = UserTodoListApi.as_view('user_todos')
+app.add_url_rule('/api/v1/users/<user_id>/todos',
+                view_func=user_todo_list_api,
+                strict_slashes = False,
+                )
+app.add_url_rule('/api/v1/users/<user_id>/todos/<id>',
+                view_func=user_todo_list_api,
+                strict_slashes = False,
+                methods = ['PATCH', 'DELETE'])
 

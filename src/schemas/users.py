@@ -1,4 +1,5 @@
 from marshmallow_sqlalchemy import SQLAlchemyAutoSchema
+from marshmallow_sqlalchemy.fields import Nested
 from src.database.models import User
 
 
@@ -7,4 +8,5 @@ class UserSchema(SQLAlchemyAutoSchema):
         model = User
         exclude = ('remember_token', 'created_at')
         load_instance = True
-        load_only = ('password',)
+        #include_fk = True
+        todos = Nested('TodoSchema', many = True, exclude = ('updated_at','created_at',))

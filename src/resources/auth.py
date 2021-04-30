@@ -1,5 +1,4 @@
 from datetime import timedelta, datetime
-from functools import wraps
 import jwt
 
 from flask import jsonify, request
@@ -10,35 +9,8 @@ from sqlalchemy.exc import IntegrityError
 
 from src import db, app
 from src.schemas.users import UserSchema
-# from src.database.models import User
 from src.services.user_service import UserService
-
-
-# decorator for verifying the JWT
-def token_required(f):
-    @wraps(f)
-    def decorated(*args, **kwargs):
-        token = None
-        #print(request.headers)
-        # jwt is passed in the request header
-        if 'x-access-token' in request.headers:
-            token = request.headers['x-access-token']
-        # return 401 if token is not passed
-        if not token:
-            return jsonify({'message' : 'Token is missing !!'}), 401
-
-        try:
-            # decoding the payload to fetch the stored details
-            data = jwt.decode(token, app.config['SECRET_KEY'], algorithms=["HS256"])
-            current_user = UserService.fetch_user_by_id(db.session, data['id'])
-        except:
-            return jsonify({
-                'message' : 'Token is invalid !!'
-            }), 401
-        # returns the current logged in users contex to the routes
-        return  f( *args, **kwargs)
-
-    return decorated
+from src.services.auth_service import token_required
 
 class LoginApi(MethodView):
     
