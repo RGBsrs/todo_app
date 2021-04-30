@@ -1,4 +1,3 @@
-from copy import Error
 import datetime
 from flask import jsonify, request
 from flask.views import MethodView
@@ -31,7 +30,7 @@ class UserTodoListApi(MethodView):
         try:
             todo = Todo(title = request.json['title'])
             user.todos.append(todo)
-        except Error as e:
+        except Exception as e:
             return {'Message': f'error: {e}'}, 400
         db.session.add(user)
         db.session.commit()
@@ -68,3 +67,13 @@ class UserTodoListApi(MethodView):
         db.session.delete(todo)
         db.session.commit()
         return '', 204
+
+
+class UserApi(MethodView):
+    user_schema = UserSchema()
+
+    @token_required
+    def get(self, user_id):
+        user = UserService.fetch_user_by_id(db.session,user_id)
+
+        return jsonify(self.user_schema.dump(user)),200
