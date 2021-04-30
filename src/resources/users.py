@@ -17,6 +17,7 @@ class UserTodoListApi(MethodView):
     user_sсhema = UserSchema()
     todo_schema = TodoSchema()
 
+    @token_required
     def get(self, user_id):
         user = UserService.fetch_user_by_id(db.session, user_id)
         todos = user.todos
@@ -24,6 +25,7 @@ class UserTodoListApi(MethodView):
             return '', 404
         return jsonify(self.todo_schema.dump(todos, many= True)), 200
 
+    @token_required
     def post(self, user_id):
         user = UserService.fetch_user_by_id(db.session, user_id)
         try:
@@ -33,8 +35,9 @@ class UserTodoListApi(MethodView):
             return {'Message': f'error: {e}'}, 400
         db.session.add(user)
         db.session.commit()
-        return jsonify(self.user_sсhema.dump(user)), 201
+        return jsonify(self.todo_schema.dump(todo)), 201
 
+    @token_required
     def patch(self, user_id, id = None):
         if not id:
             completed = request.json['completed']
@@ -54,12 +57,12 @@ class UserTodoListApi(MethodView):
         db.session.commit()    
         return jsonify(self.todo_schema.dump(todo)), 200
 
-
+    @token_required
     def delete(self, user_id, id = None):
         if not id:
             TodoService.delete_completed_todos(db.session, user_id)
             return '', 204
-        todo = TodoService.fetch_user_todo_by_id(db.session,user_id, id)
+        todo = TodoService.fetch_todo_by_id(db.session,user_id, id)
         if not todo:
             return '', 404
         db.session.delete(todo)

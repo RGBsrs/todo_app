@@ -34,8 +34,10 @@ class LoginApi(MethodView):
             'id': user.id,
             'exp' : datetime.utcnow() + timedelta(minutes = 30)
             }, app.config['SECRET_KEY'])
-
-            return jsonify({'token' : token}), 201
+            user_id = user.id
+            return jsonify({
+                'token' : token,
+                'user_id': user_id}), 201
         # returns 403 if password is wrong
         return ('Could not verify',
                 403,
